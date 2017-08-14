@@ -1,0 +1,19 @@
+{
+  "name": "backend-for-spa",
+  "version": "1.0.0",
+  "description": "Back end for spa",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TaiCor/backend-for-spa.git"
+  },
+  "author": "TaiCor",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TaiCor/backend-for-spa/issues"
+  },
+  "homepage": "https://github.com/TaiCor/backend-for-spa#readme"
+}
