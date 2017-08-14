@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/TaiCor/backend-for-spa/issues"
   },
-  "homepage": "https://github.com/TaiCor/backend-for-spa#readme"
+  "homepage": "https://github.com/TaiCor/backend-for-spa#readme",
+  "devDependencies": {
+    "express": "^4.15.4",
+    "nodemon": "^1.11.0"
+  }
 }
