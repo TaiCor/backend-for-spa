@@ -7,7 +7,7 @@ const connection = mysql.createConnection({
   password: '',
   database: 'mydb'
 })
-app.use(express.static('public'))
+app.use('/images', express.static('public'))
 
 connection.connect(function (err) {
   if (!err) {
@@ -55,3 +55,7 @@ app.put('/upgradePost', function (req, res) {
 app.post('/login', function (req, res) {})
 
 app.post('/singup', function (req, res) {})
+
+app.listen(5000, function () {
+  console.log('listen 5000')
+})
