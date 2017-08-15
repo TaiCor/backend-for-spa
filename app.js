@@ -2,9 +2,9 @@ const express = require('express')
 const app = express()
 const mysql = require('mysql')
 const connection = mysql.createConnection({
-  host: 'localhost',
+  host: 'localhost:5000',
   user: 'root',
-  password: '',
+  password: 'vandal123',
   database: 'mydb'
 })
 app.use('/images', express.static('public'))
