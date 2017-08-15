@@ -2,7 +2,8 @@ const express = require('express')
 const app = express()
 const mysql = require('mysql')
 const connection = mysql.createConnection({
-  host: 'localhost:5000',
+  host: 'localhost',
+  port: '5000',
   user: 'root',
   password: 'vandal123',
   database: 'mydb'
@@ -18,7 +19,7 @@ connection.connect(function (err) {
 })
 
 app.get('/posts', function (req, res) {
-  connection.query('select Posts.id, Posts.picture, Posts.title, Posts.description, Posts.date, Users.Name from Posts left join Users on Posts.Users_id = Users.id', function (err, rows) {
+  connection.query('select posts.id, posts.picture, posts.title, posts.description, posts.date, users.name from posts left join users on posts.users_id = users.id', function (err, rows) {
     connection.end()
     if (!err) {
       res.json(rows)
@@ -56,6 +57,6 @@ app.post('/login', function (req, res) {})
 
 app.post('/singup', function (req, res) {})
 
-app.listen(5000, function () {
-  console.log('listen 5000')
+app.listen(4000, function () {
+  console.log('listen 4000')
 })
