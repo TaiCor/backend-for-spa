@@ -38,7 +38,7 @@ app.get('/myposts', function (req, res) {
     if (!err) {
       res.json(rows)
     } else {
-      console.log('error')
+      console.log(err)
     }
   })
 })
