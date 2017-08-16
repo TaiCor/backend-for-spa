@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const mysql = require('mysql')
 const fileUpload = require('express-fileuploader')
+var path = require('path')
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -87,6 +88,22 @@ app.post('/singup/', function (req, res) {
 //     }
 //   })
 // })
+
+app.post('/createpost', function(req,res){
+  if (!req.files) {
+    console.log('no files uploaded!')
+    res.send('no files uploaded')
+  } else { 
+    let file = req.files.file
+    let extantion = path.extname(file.name)
+    if (extantion !== '.jpg' && extantion !== '.png' && extantion !== '.gif') {
+      console.log('require files in jpg/png/gif format')
+      res.send('not a picture')
+    } else {
+      file.mv(__dirname + 'public' + file.name)
+    }
+  }
+})
 
 app.listen(4000, function () {
   console.log('listen 4000')
