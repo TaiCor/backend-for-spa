@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const mysql = require('mysql')
+const fileUpload = require('express-fileuploader')
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -11,6 +12,7 @@ const connection = mysql.createConnection({
 })
 
 app.use('/images', express.static('public'))
+app.use(fileUpload())
 
 connection.connect(function (err) {
   if (!err) {
