@@ -21,7 +21,10 @@ connection.connect(function (err) {
 })
 
 app.get('/posts', function (req, res) {
-  connection.query('select posts.id, posts.picture, posts.title, posts.description, posts.date, users.name from posts left join users on posts.user_id = users.id', function (err, rows) {
+  connection.query(`select posts.id, posts.picture, 
+                    posts.title, posts.description, 
+                    posts.date, users.name from posts 
+                    left join users on posts.user_id = users.id`, function (err, rows) {
     connection.end()
     if (!err) {
       res.json(rows)
@@ -44,6 +47,14 @@ app.get('/myposts', function (req, res) {
 })
 
 app.get('/comments', function (req, res) {
+  connection.query(`select comments.text, comments.date, comments.post_id, users.name from comments left join users on users.id = comments.user_id `, function (err, rows) {
+    connection.end()
+    if (!err) {
+      res.json(rows)
+    } else {
+      console.log(err)
+    }
+  })
 })
 
 app.get('/rate', function (req, res) {
