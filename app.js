@@ -79,32 +79,43 @@ app.put('/upgradePost', function (req, res) {
 app.post('/login', function (req, res) {})
 
 app.post('/singup/', function (req, res) {
-  res.send(req.params)
+  let name = req.body.name
+  let password = req.body.password
+  let login = req.body.login
+  connection.query('SELECT 1 FROM users WHERE login = ' + login + ' ORDER BY login LIMIT 1', function (err, res) {
+    if (err) {
+      console.log(err)
+    } else {
+      if (res.length > 0) {
+        res.json('login exist')
+      } else {
+        connection.query(`insert into users (id, name, login, password) values (null, ?, ?, ?)`, [name, login, password], function (err, rows) {
+          if (!err) {
+            console.log('user added')
+          } else {
+            console.log(err)
+          }
+        })
+      }
+    }
+  })
 })
-//   connection.query('insert into users set ?', [user], function (err, rows) {
-//     if (err) {
-//       console.log(err)
-//     } else {
-//       console.log('user added')
-//     }
-//   })
-// })
 
 app.post('/createpost', function (req, res) {
-  res.json(req.files.image.name)
-  // if (!req.files) {
-  //   console.log('no files uploaded!')
-  //   res.send('no files uploaded')
-  // } else {
-  //   let file = req.files.file
-  //   let extantion = path.extname(file.name)
-  //   if (extantion !== '.jpg' && extantion !== '.png' && extantion !== '.gif') {
-  //     console.log('require files in jpg/png/gif format')
-  //     res.send('not a picture')
-  //   } else {
-  //     file.mv(path.resolve('/public/', file.name))
-  //   }
-  // }
+  if (!req.files) {
+    console.log('no files uploaded!')
+    res.send('no files uploaded')
+  } else {
+    let file = req.files.file
+    let extantion = path.extname(file.name)
+    if (extantion !== '.jpg' && extantion !== '.png' && extantion !== '.gif') {
+      console.log('require files in jpg/png/gif format')
+      res.send('not a picture')
+    } else {
+      file.mv(path.resolve('/public/', file.name))
+      let src = path.resolve('/public/', file.name)
+    }
+  }
 })
 
 app.listen(4000, function () {
