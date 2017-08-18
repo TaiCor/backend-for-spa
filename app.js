@@ -1,7 +1,6 @@
 const express = require('express')
 const app = express()
 const mysql = require('mysql')
-
 const fileUpload = require('express-fileupload')
 const bodyParser = require('body-parser')
 const path = require('path')
@@ -67,6 +66,7 @@ app.delete('/deletePost/:id', function (req, res) {
   connection.query('delete from posts where id=' + mysql.escape(req.params.id), function (err, rows) {
     if (!err) {
       console.log('row deleted!')
+      res.json({status: 'success'})
     } else {
       console.log(err)
     }
@@ -78,20 +78,22 @@ app.put('/upgradePost', function (req, res) {
 
 app.post('/login', function (req, res) {})
 
-app.post('/singup/', function (req, res) {
+app.post('/singup', function (req, res) {
   let name = req.body.name
   let password = req.body.password
   let login = req.body.login
-  connection.query('SELECT 1 FROM users WHERE login = ' + login + ' ORDER BY login LIMIT 1', function (err, res) {
+  connection.query('SELECT 1 FROM users WHERE login = "' + login + '" ORDER BY login LIMIT 1', function (err, response) {
     if (err) {
       console.log(err)
     } else {
-      if (res.length > 0) {
-        res.json('login exist')
+      if (response.length > 0) {
+        res.json({error: 'user exist'})
+        console.log('login exist')
       } else {
         connection.query(`insert into users (id, name, login, password) values (null, ?, ?, ?)`, [name, login, password], function (err, rows) {
           if (!err) {
             console.log('user added')
+            res.json({res: 'success'})
           } else {
             console.log(err)
           }
