@@ -4,6 +4,7 @@ const mysql = require('mysql')
 const fileUpload = require('express-fileupload')
 const bodyParser = require('body-parser')
 const path = require('path')
+const uuidv4 = require('uuid/v4')
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -26,7 +27,7 @@ connection.connect(function (err) {
   }
 })
 
-app.get('/posts', function (req, res) {
+app.get('/posts', function (req, res, next) {
   connection.query(`select posts.id, posts.picture, 
                     posts.title, posts.description, 
                     posts.date, users.name from posts 
@@ -34,7 +35,7 @@ app.get('/posts', function (req, res) {
     if (!err) {
       res.json(rows)
     } else {
-      console.log(err)
+      next(err)
     }
   })
 })
@@ -76,15 +77,17 @@ app.delete('/deletePost/:id', function (req, res) {
 app.put('/upgradePost', function (req, res) {
 })
 
-app.post('/login', function (req, res) {})
+app.get('/login', function (req, res) {
+  res.json({})
+})
 
-app.post('/singup', function (req, res) {
+app.post('/singup', function (req, res, next) {
   let name = req.body.name
   let password = req.body.password
   let login = req.body.login
   connection.query('SELECT 1 FROM users WHERE login = "' + login + '" ORDER BY login LIMIT 1', function (err, response) {
     if (err) {
-      console.log(err)
+      next(err)
     } else {
       if (response.length > 0) {
         res.json({error: 'user exist'})
@@ -104,20 +107,33 @@ app.post('/singup', function (req, res) {
 })
 
 app.post('/createpost', function (req, res) {
-  if (!req.files) {
-    console.log('no files uploaded!')
-    res.send('no files uploaded')
-  } else {
-    let file = req.files.file
-    let extantion = path.extname(file.name)
+  let title = req.body.title
+  let description = req.body.description
+  let image = req.files.image
+  if (title !== '' && description !== '' && image) {
+    let extantion = path.extname(image.name)
     if (extantion !== '.jpg' && extantion !== '.png' && extantion !== '.gif') {
       console.log('require files in jpg/png/gif format')
-      res.send('not a picture')
+      res.json({error: 'not a picture'})
     } else {
-      file.mv(path.resolve('/public/', file.name))
-      let src = path.resolve('/public/', file.name)
+      let src = path.resolve('/public/', image.name)
+      image.mv(src)
+      connection.query('insert into posts (id, picture, title, description, date, user_id) values (null, ?, ?, ?, now(), ?)', [src, title, description], function (err) {
+        if (!err) {
+          res.json({res: 'post added'})
+          console.log('success')
+        } else {
+          console.log(err)
+        }
+      })
     }
+  } else {
+    res.json({error: 'some fields empty'})
   }
+})
+app.use((err, req, res, next) => {
+  console.error(err.stack)
+  res.status(500).send('Something broke!')
 })
 
 app.listen(4000, function () {
