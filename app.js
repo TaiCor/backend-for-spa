@@ -1,8 +1,10 @@
 const express = require('express')
 const app = express()
 const mysql = require('mysql')
-const fileUpload = require('express-fileuploader')
-var path = require('path')
+
+const fileUpload = require('express-fileupload')
+const bodyParser = require('body-parser')
+const path = require('path')
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -14,6 +16,8 @@ const connection = mysql.createConnection({
 
 app.use('/images', express.static('public'))
 app.use(fileUpload())
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 connection.connect(function (err) {
   if (!err) {
@@ -28,7 +32,6 @@ app.get('/posts', function (req, res) {
                     posts.title, posts.description, 
                     posts.date, users.name from posts 
                     left join users on posts.user_id = users.id`, function (err, rows) {
-    connection.end()
     if (!err) {
       res.json(rows)
     } else {
@@ -39,7 +42,6 @@ app.get('/posts', function (req, res) {
 
 // app.get('/myposts', function (req, res) {
 //   connection.query('select posts.id, posts.picture, posts.title, posts.description, posts.date, users.name from posts left join users on posts.Users_id = Users.id where Users.id =' + mysql.escape(userId), function (err, rows) {
-//     connection.end()
 //     if (!err) {
 //       res.json(rows)
 //     } else {
@@ -50,7 +52,6 @@ app.get('/posts', function (req, res) {
 
 app.get('/comments', function (req, res) {
   connection.query(`select comments.text, comments.date, comments.post_id, users.name from comments left join users on users.id = comments.user_id `, function (err, rows) {
-    connection.end()
     if (!err) {
       res.json(rows)
     } else {
@@ -89,20 +90,21 @@ app.post('/singup/', function (req, res) {
 //   })
 // })
 
-app.post('/createpost', function(req,res){
-  if (!req.files) {
-    console.log('no files uploaded!')
-    res.send('no files uploaded')
-  } else { 
-    let file = req.files.file
-    let extantion = path.extname(file.name)
-    if (extantion !== '.jpg' && extantion !== '.png' && extantion !== '.gif') {
-      console.log('require files in jpg/png/gif format')
-      res.send('not a picture')
-    } else {
-      file.mv(__dirname + 'public' + file.name)
-    }
-  }
+app.post('/createpost', function (req, res) {
+  res.json(req.files.image.name)
+  // if (!req.files) {
+  //   console.log('no files uploaded!')
+  //   res.send('no files uploaded')
+  // } else {
+  //   let file = req.files.file
+  //   let extantion = path.extname(file.name)
+  //   if (extantion !== '.jpg' && extantion !== '.png' && extantion !== '.gif') {
+  //     console.log('require files in jpg/png/gif format')
+  //     res.send('not a picture')
+  //   } else {
+  //     file.mv(path.resolve('/public/', file.name))
+  //   }
+  // }
 })
 
 app.listen(4000, function () {
